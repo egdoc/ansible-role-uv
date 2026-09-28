@@ -1,0 +1,13 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Check uv version
+      ansible.builtin.command:
+        cmd: /usr/local/bin/uv --version
+      changed_when: false
+      register: uv_version
+
+    - name: Assert uv version is 0.12.19
+      ansible.builtin.assert:
+        that: '"0.12.19" in uv_version.stdout'
