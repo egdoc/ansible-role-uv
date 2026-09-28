@@ -1,5 +1,6 @@
 Ansible role: uv
 =========
+[![CI](https://github.com/egdoc/ansible-role-uv/actions/workflows/ci.yml/badge.svg)](https://github.com/egdoc/ansible-role-uv/actions/workflows/ci.yml)
 
 Ansible role to install uv on Linux (x86_64)
 
