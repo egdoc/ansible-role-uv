@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Apply egdoc.uv role
+      ansible.builtin.import_role:
+        name: egdoc.uv

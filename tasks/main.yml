@@ -1,0 +1,37 @@
+---
+- name: Check uv exists
+  ansible.builtin.stat:
+    path: '{{ uv_install_dir }}/uv'
+  register: uv_binary
+
+- name: Check uv version
+  ansible.builtin.command:
+    cmd: ./uv --version
+    chdir: '{{ uv_install_dir }}'
+  changed_when: false
+  register: check_uv_binary_version
+  when: uv_binary.stat.exists
+
+- name: Install uv
+  when: not uv_binary.stat.exists or uv_version not in check_uv_binary_version.stdout
+  block:
+    - name: Download uv
+      ansible.builtin.get_url:
+        url: '{{ uv_repo_url }}/releases/download/{{ uv_version }}/uv-x86_64-unknown-linux-gnu.tar.gz'
+        dest: /tmp/uv-x86_64-unknown-linux-gnu.tar.gz
+        checksum: sha256:{{ uv_version_checksum }}
+        mode: '0644'
+
+    - name: Ensure uv binaries are installed
+      ansible.builtin.unarchive:
+        src: /tmp/uv-x86_64-unknown-linux-gnu.tar.gz
+        dest: '{{ uv_install_dir }}'
+        remote_src: true
+        extra_opts: --strip-components=1
+        mode: '0755'
+
+  always:
+    - name: Ensure uv tarball is absent
+      ansible.builtin.file:
+        path: /tmp/uv-x86_64-unknown-linux-gnu.tar.gz
+        state: absent
